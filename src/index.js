@@ -4,9 +4,6 @@ import QRCode from "react-qr-code";
 import html2canvas from "html2canvas"
 import "./index.css";
 import logo from "./img/hc_logo_black.png";
-// import { createUseStyles } from "react-jss"
-// import DEV_RAINBOW_LOGO from "./img/hc_logo_black.png"
-// import DEV_RAINBOW_BG from "./img/hc_logo_black.png"
 
 const TYPES = {
     CHECKLIST: 1,
@@ -14,56 +11,9 @@ const TYPES = {
     CROP: 3,
     EQUIPMENT: 4,
     LOCATION: 5,
-    QRCODE_LABEL: 6,
+    QUESTION: 6,
+    QRCODE_LABEL: 7,
 };
-
-// const ICON_SIZE = 100;
-
-/* const useStyles = createUseStyles(theme => ({
-  root: {
-    backgroundImage: `url('${DEV_RAINBOW_BG}')`,
-    maxWidth: 1060,
-    maxHeight: 1521,
-    borderRadius: "32px",
-    border: "5px solid #EFEFF7",
-    padding: theme.spacing(11),
-  },
-  logo: {
-    boxShadow: "9px 3px 20px 1px rgb(0 0 0 / 10%)",
-    height: 150,
-    width: 150,
-    borderRadius: 8,
-  },
-  icon: {
-    borderRadius: 8,
-    width: ICON_SIZE,
-    height: ICON_SIZE,
-    position: "absolute",
-    // Need to offset the values due to `excavate: true` in qrcode.react
-    top: `calc(50% - ${ICON_SIZE / 2 + 1}px)`,
-    // Need to offset the values due to `excavate: true` in qrcode.react
-    left: `calc(50% - ${ICON_SIZE / 2 - 5}px)`,
-  },
-  qrContainer: {
-    position: "relative",
-    backgroundColor: "#EFEFF7",
-    borderRadius: "56px",
-    margin: theme.spacing(8, 0),
-    padding: theme.spacing(4),
-  },
-  qrInner: {
-    backgroundColor: "white",
-    borderRadius: "32px",
-    padding: 90,
-  },
-  referredBy: {
-    fontStyle: "normal",
-    fontWeight: "600",
-    fontSize: "24px",
-    lineHeight: "29px",
-    letterSpacing: "0.1em",
-  },
-})) */
 
 const getCanvas = () => {
     const qr = document.getElementById("qr-code-template")
@@ -74,21 +24,25 @@ const getCanvas = () => {
 
     return html2canvas(qr, {
         onclone: snapshot => {
-            const qrElement = snapshot.getElementById("qr-code-template")
+            const qrElement = snapshot.getElementById("qr-code-template");
+            const borderOutElement = snapshot.getElementById("border-out");
+            const borderInElement = snapshot.getElementById("border-in")
             
-            if (!qrElement) {
+            if (!qrElement || !borderOutElement || !borderInElement) {
                 return;
             }
             
-            // Make element visible for cloning
             qrElement.style.display = "block";
-            qrElement.style.padding = "4px 8px 4px 8px";
-            qrElement.style.border = "8px solid black";
-            qrElement.style.borderRadius = "1px";
-            qrElement.style.boxSizing = "border-box";
-            qrElement.style.margin = "10px 0px 100px 500px";
-            // qrElement.style.transform  = "translate(1)";
-            // qrElement.style.backgroundImage = `url(${logo})`;
+            borderOutElement.style.boxSizing = "border-box";
+            borderOutElement.style.border = "4px solid black";
+
+            borderInElement.style.boxSizing = "border-box";
+            borderInElement.style.borderLeft = "0px solid black";
+            borderInElement.style.borderRight = "0px solid black";
+            borderInElement.style.borderTop = "1px solid black";
+            borderInElement.style.borderBottom = "6px solid black";
+
+            borderInElement.style.marginBottom = "-8px";
         },
     })
 }
@@ -99,22 +53,75 @@ const downloadQRCode = async (qrCodeLabel) => {
     if (!canvas) {
         throw new Error("<canvas> not found in DOM");
     }
-    console.log(qrCodeLabel)
 
     const pngUrl = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
-    console.log(1)
     const downloadLink = document.createElement("a");
-    console.log(2)
     downloadLink.href = pngUrl;
-    console.log(3)
     downloadLink.download = (qrCodeLabel || "QR Code") + ".png";
-    console.log(4)
     document.body.appendChild(downloadLink);
-    console.log(5)
     downloadLink.click();
-    console.log(6)
     document.body.removeChild(downloadLink);
-    console.log(7)
+}
+
+const downloadSVG = async (data) => {
+    const qrCodeURL = document.getElementById("qr-code-in")
+    var svgData = document.getElementById("qr-code-in").outerHTML;
+    var svgBlob = new Blob([svgData], {type:"image/svg+xml;charset=utf-8"});
+    var svgUrl = URL.createObjectURL(svgBlob);
+    var downloadLink = document.createElement("a");
+    downloadLink.href = svgUrl;
+    downloadLink.download = "newesttree.svg";
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
+}
+
+const formatData = (checklist, crew, crop, equipment, locations, questions) => {
+    let dataTemp = {
+        "action": "START_REPORT",
+        "module": "INSPECTOR",
+        "data": {}
+    };
+
+    if (checklist) {
+        dataTemp.data.pestCategory = checklist;
+    }
+
+    if (crew) {
+        dataTemp.data.crew = crew;
+    }
+
+    if (crop) {
+        dataTemp.data.crop = crop;
+    }
+
+    if (equipment) {
+        dataTemp.data.equipment = equipment;
+    }
+
+    if (locations.length) {
+        dataTemp.data.locations = [];
+
+        for (let i = 0; i < locations.length; i++) {
+            dataTemp.data.locations.push({
+                "level": "block", // level (block, section, field)
+                "id": 123 // location id 
+            });
+        } 
+    }
+
+    if (questions.length) {
+        dataTemp.data.questions = [];
+
+        for (let i = 0; i < questions.length; i++) {
+            dataTemp.data.questions.push({
+                "code": 123,
+                "answer": "Yes"
+            });
+        } 
+    }
+
+    return dataTemp;
 }
 
 class Home extends React.Component {
@@ -125,6 +132,8 @@ class Home extends React.Component {
             crew: "",
             crop: "",
             equipment: "",
+            locations: [],
+            questions: [],
             qrCodeLabel: "",
         };
     }
@@ -134,55 +143,33 @@ class Home extends React.Component {
 
         if (type === TYPES.CHECKLIST) {
             this.setState({
-                checklist: parseInt(value)
+                checklist: parseInt(value) || ""
             });
         }
 
         if (type === TYPES.CREW) {
             this.setState({
-                crew: parseInt(value)
+                crew: parseInt(value) || ""
             });
         }
 
         if (type === TYPES.CROP) {
             this.setState({
-                crop: parseInt(value)
+                crop: parseInt(value) || ""
             });
         }
 
         if (type === TYPES.EQUIPMENT) {
             this.setState({
-                equipment: parseInt(value)
+                equipment: parseInt(value) || ""
             });
         }
 
         if (type === TYPES.QRCODE_LABEL) {
             this.setState({
-                qrCodeLabel: parseInt(value)
+                qrCodeLabel: parseInt(value) || ""
             });
         }
-    }
-
-    download(data) {
-        console.log(data);
-        const qrCodeURL = document.getElementById("qr-code-in")
-        // .toDataURL("image/png").replace("image/png", "image/octet-stream");
-        console.log(qrCodeURL)
-        /* let aEl = document.createElement("a");
-        aEl.href = qrCodeURL;
-        aEl.download = "QR_Code.png";
-        document.body.appendChild(aEl);
-        aEl.click();
-        document.body.removeChild(aEl); */
-        var svgData = document.getElementById("qr-code-in").outerHTML;
-        var svgBlob = new Blob([svgData], {type:"image/svg+xml;charset=utf-8"});
-        var svgUrl = URL.createObjectURL(svgBlob);
-        var downloadLink = document.createElement("a");
-        downloadLink.href = svgUrl;
-        downloadLink.download = "newesttree.svg";
-        document.body.appendChild(downloadLink);
-        downloadLink.click();
-        document.body.removeChild(downloadLink);
     }
 
     render() {
@@ -190,8 +177,9 @@ class Home extends React.Component {
         const crew = this.state.crew;
         const crop = this.state.crop;
         const equipment = this.state.equipment;
+        const locations = this.state.locations;
+        const questions = this.state.questions;
         const qrCodeLabel = this.state.qrCodeLabel;
-        console.log(this.state);
         
         let qrCodeLabelDiv;
         if (qrCodeLabel) {
@@ -200,20 +188,21 @@ class Home extends React.Component {
             qrCodeLabelDiv = <div className="qr-code-label">QR Code</div>;
         }
 
-        let data = JSON.stringify({
-            "action": "START_REPORT",
-            "module": "INSPECTOR",
-            "data": {
-                "pestCategory": checklist, // 539
-                "crew": crew,
-                "cropVariety": crop,
-                "equipment": equipment,
-                "locations": []
-            }
-        });
+        let data = JSON.stringify(formatData(checklist, crew, crop, equipment, [], []));
 
         return (
             <div className="home">
+                <div className="title1">
+                    HeavyConnect
+                </div>
+
+                <div className="title2">
+                    Scan & Go - QR Code Generator
+                </div>
+
+                <div className="space-vertical-lg">
+                </div>
+
                 <div className="input-row">
                     <div className="input-label">
                         Checklist ID
@@ -225,6 +214,11 @@ class Home extends React.Component {
                         className="input"
                         value={checklist}
                         onChange={(e) => this.handleChange(e, TYPES.CHECKLIST)}
+                        onKeyPress={(e) => {
+                            if (!/[0-9]/.test(e.key)) {
+                                e.preventDefault();
+                            }
+                        }}
                     />
                 </div>
                 
@@ -238,6 +232,11 @@ class Home extends React.Component {
                         className="input"
                         value={crew}
                         onChange={(e) => this.handleChange(e, TYPES.CREW)}
+                        onKeyPress={(e) => {
+                            if (!/[0-9]/.test(e.key)) {
+                                e.preventDefault();
+                            }
+                        }}
                     />
                 </div>
 
@@ -251,12 +250,17 @@ class Home extends React.Component {
                         className="input"
                         value={crop}
                         onChange={(e) => this.handleChange(e, TYPES.CROP)}
+                        onKeyPress={(e) => {
+                            if (!/[0-9]/.test(e.key)) {
+                                e.preventDefault();
+                            }
+                        }}
                     />
                 </div>
 
                 <div className="input-row">
                     <div className="input-label">
-                        Crew ID
+                        Equipment ID
                     </div>
                     <input
                         type="text"
@@ -264,6 +268,11 @@ class Home extends React.Component {
                         className="input"
                         value={equipment}
                         onChange={(e) => this.handleChange(e, TYPES.EQUIPMENT)}
+                        onKeyPress={(e) => {
+                            if (!/[0-9]/.test(e.key)) {
+                                e.preventDefault();
+                            }
+                        }}
                     />
                 </div>
 
@@ -273,46 +282,35 @@ class Home extends React.Component {
                     </div>
                     <input
                         type="text"
-                        placeholder="Equipment ID"
+                        placeholder="QR Code"
                         className="input"
                         value={qrCodeLabel}
                         onChange={(e) => this.handleChange(e, TYPES.QRCODE_LABEL)}
                     />
                 </div>
+
+                <div className="space-vertical-lg">
+                </div>
                 
                 <div id="qr-code-template">
-                    <div>
-                        {qrCodeLabelDiv}
+                    <div id="border-out" className="border-out">
                         <div>
                             <QRCode
-                                size={256}
+                                size={512}
                                 style={{ height: "auto", maxWidth: "100%", width: "100%" }}
                                 value={data}
                                 title="HeavyConnect - Scan and Go"
                                 viewBox={`0 0 256 256`}
+                                className="border-in"
+                                id="border-in"
                             />
+                            {qrCodeLabelDiv}
                         </div>
-                        <img alt="logo" src={logo} className="qr-code-logo" />
+                        {/*<img alt="logo" src={logo} className="qr-code-logo" />*/}
                     </div>
                 </div>
 
-                {/*
-                <div className="qr-code">
-                    <QRCode
-                        id="qr-code-in"
-                        size={256}
-                        style={{ height: "auto", maxWidth: "100%", width: "100%" }}
-                        value={data}
-                        title="TEST TEST"
-                        viewBox={`0 0 256 256`}
-                    />
-                </div>
-                <button onClick={() => this.download(data)}>
-                    Download QR Code
-                </button>
-                */}
-
-                <button onClick={() => downloadQRCode(qrCodeLabel)}>
+                <button onClick={() => downloadQRCode(qrCodeLabel)} className="glow-on-hover">
                     Download Canvas
                 </button>
             </div>
