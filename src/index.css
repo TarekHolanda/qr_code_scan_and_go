@@ -1,0 +1,43 @@
+body {
+    font: 32px "Century Gothic", Futura, sans-serif;
+    /*background: #1B1C1E;
+    color: white;*/
+    text-align: center;
+}
+
+.home {
+    display: inline-block;
+    flex-direction: row;
+    margin: auto;
+}
+
+.input-row {
+    display: flex;
+}
+
+.input-label {
+    font-size: 16px;
+}
+
+.input {
+    margin: auto;
+    margin-top: 0px;
+    margin-bottom: 24px;
+}
+
+.qr-code {
+    height: auto;
+    margin: auto;
+    margin-top: 16px;
+    max-width: 256;
+    width: 100%;
+}
+
+.qr-code-label {
+    font-size: 24px;
+}
+
+.qr-code-logo {
+    width: 96px;
+    margin-top: -4px;
+}
