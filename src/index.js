@@ -388,7 +388,7 @@ class Home extends React.Component {
                 </div>
                 
                 <div id="qr-code-template" className="margin-auto">
-                    <div>
+                    <div id="border-out" className="border-out">
                         <div>
                             <QRCode
                                 size={512}
@@ -396,6 +396,8 @@ class Home extends React.Component {
                                 value={data}
                                 title="HeavyConnect - Scan and Go"
                                 viewBox={`0 0 256 256`}
+                                className="border-in"
+                                id="border-in"
                             />
                             {qrCodeLabelDiv}
                         </div>
