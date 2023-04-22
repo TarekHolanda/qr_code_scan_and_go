@@ -15,13 +15,12 @@ body {
     display: flex;
 }
 
-.col-left {
-    margin: 32px;
-    width: 512px;
-}
-
 .margin-auto {
     margin: auto;
+}
+
+.margin-32 {
+    margin: 32px;
 }
 
 .margin-top-16 {
@@ -56,6 +55,10 @@ body {
 
 .width-100 {
     width: 100%;
+}
+
+.width-512 {
+    width: 512px;
 }
 
 .max-width-512 {

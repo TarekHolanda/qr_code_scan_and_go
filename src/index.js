@@ -276,7 +276,7 @@ class Home extends React.Component {
 
         return (
             <div className="home">
-                <div className="col-left">
+                <div className="width-512 margin-32">
                     <div className="text-32">
                         HeavyConnect
                     </div>
@@ -388,7 +388,7 @@ class Home extends React.Component {
                 </div>
                 
                 <div id="qr-code-template" className="margin-auto">
-                    <div id="border-out" className="border-out">
+                    <div>
                         <div>
                             <QRCode
                                 size={512}
@@ -396,8 +396,6 @@ class Home extends React.Component {
                                 value={data}
                                 title="HeavyConnect - Scan and Go"
                                 viewBox={`0 0 256 256`}
-                                className="border-in"
-                                id="border-in"
                             />
                             {qrCodeLabelDiv}
                         </div>
