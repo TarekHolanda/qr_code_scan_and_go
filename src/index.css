@@ -6,17 +6,72 @@ body {
 }
 
 .home {
-    display: inline-block;
+    display: flex;
     flex-direction: row;
     margin: auto;
 }
 
-.title1 {
+.col-left {
+    margin: 32px;
+    width: 512px;
+}
+
+.col-right {
+    margin: auto;
+}
+
+.logo {
+    width: 64px;
+    position: absolute;
+    bottom: 4px;
+}
+
+.logo-right {
+    right: 4px;
+}
+
+.logo-left {
+    left: 4px;
+}
+
+.text-32 {
     font-size: 32px;
 }
 
-.title2 {
+.text-24 {
     font-size: 24px;
+}
+
+.width-70 {
+    width: 70%;
+}
+
+.max-width-512 {
+    max-width: 512px;
+}
+
+.pointer {
+    cursor: pointer;
+}
+
+.line-break {
+    line-break: anywhere;
+}
+
+.space-vertical-8 {
+    height: 8px;
+}
+
+.space-vertical-16 {
+    height: 16px;
+}
+
+.space-vertical-20 {
+    height: 20px;
+}
+
+.space-vertical-24 {
+    height: 20px;
 }
 
 .input-row {
@@ -31,10 +86,6 @@ body {
     padding: 6px;
 }
 
-.space-vertical-lg {
-    height: 20px;
-}
-
 .qr-code {
     height: auto;
     margin: auto;
@@ -46,11 +97,6 @@ body {
 .qr-code-label {
     font-size: 32px;
     font-weight: 600;
-}
-
-.qr-code-logo {
-    width: 96px;
-    margin-top: -4px;
 }
 
 .glow-on-hover {
@@ -105,25 +151,4 @@ body {
     left: 0;
     top: 0;
     border-radius: 10px;
-}
-
-.input {
-    margin: auto;
-    margin-top: 0px;
-    margin-bottom: 24px;
-    width: 70%;
-    padding: 5px 5px 5px 7px;
-    border-radius: 5px;
-    background: #fff;
-    font-size: 12px;
-    cursor: pointer;
-    transition: width 100ms;
-}
-
-.input:hover {
-    width: 71%;
-}
-
-.input:focus {
-    width: 72%;
 }
