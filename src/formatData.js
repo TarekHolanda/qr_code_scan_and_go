@@ -22,25 +22,11 @@ export function formatData(checklist, crew, crop, equipment, locations, question
     }
 
     if (locations.length) {
-        dataTemp.data.locations = [];
-
-        for (let i = 0; i < locations.length; i++) {
-            dataTemp.data.locations.push({
-                "level": "block",
-                "id": 123 // location id 
-            });
-        }
+        dataTemp.data.locations = locations;
     }
 
     if (questions.length) {
-        dataTemp.data.questions = [];
-
-        for (let i = 0; i < questions.length; i++) {
-            dataTemp.data.questions.push({
-                "code": 123,
-                "answer": "Yes"
-            });
-        }
+        dataTemp.data.questions = questions;
     }
 
     return dataTemp;
