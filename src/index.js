@@ -165,7 +165,7 @@ class Home extends React.Component {
         if (qrCodeLabel) {
             qrCodeLabelDiv = <div className="qr-code-label max-width-512 line-break">{qrCodeLabel}</div>;
         } else {
-            qrCodeLabelDiv = <div className="qr-code-label">Fertilizer 23SB-1002</div>;
+            qrCodeLabelDiv = <div className="qr-code-label">QR Code</div>;
         }
 
         let locationsRender = [];
